@@ -13,13 +13,14 @@ private const val TAG = "HomeViewModel"
 
 class HomeViewModel : ViewModel() {
     val movies = MutableLiveData<MutableList<Result>>()
-    val pageNumber = 1
+    var pageNumber = 1
 
     init {
         loadMovies()
     }
 
-    private fun loadMovies() {
+    fun loadMovies() {
+        Log.d(TAG, "loadMovies: called with page number $pageNumber")
         viewModelScope.launch {
             val response = MoviesRepository.getPopularMovies(pageNumber)
             Log.d(TAG, "loadMovies: Response received; Forwarding;")
