@@ -14,6 +14,7 @@ private const val TAG = "HomeViewModel"
 class HomeViewModel : ViewModel() {
     val movies = MutableLiveData<MutableList<Result>>()
     var pageNumber = 1
+    val error = MutableLiveData("")
 
     init {
         loadMovies()
@@ -22,9 +23,15 @@ class HomeViewModel : ViewModel() {
     fun loadMovies() {
         Log.d(TAG, "loadMovies: called with page number $pageNumber")
         viewModelScope.launch {
-            val response = MoviesRepository.getPopularMovies(pageNumber)
-            Log.d(TAG, "loadMovies: Response received; Forwarding;")
-            addResponseToList(response)
+            try {
+                val response = MoviesRepository.getPopularMovies(pageNumber)
+                Log.d(TAG, "loadMovies: Response received; Forwarding;")
+                addResponseToList(response)
+                pageNumber++ // For next call
+            } catch (e: Exception) {
+                error.value = e.message
+                Log.d(TAG, "getPopularMovies: API called failed with ${e.message}")
+            }
         }
     }
 

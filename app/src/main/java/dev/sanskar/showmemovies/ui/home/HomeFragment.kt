@@ -10,9 +10,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.transform.RoundedCornersTransformation
+import com.google.android.material.snackbar.Snackbar
+import dev.sanskar.showmemovies.R
 import dev.sanskar.showmemovies.data.Result
 import dev.sanskar.showmemovies.databinding.FragmentHomeBinding
 import dev.sanskar.showmemovies.databinding.LayoutPopularMovieBinding
+
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -37,22 +41,40 @@ class HomeFragment : Fragment() {
 
         model.movies.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
+                hideShimmer()
                 adapter.submitList(it)
+            }
+        }
+
+        model.error.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                hideShimmer()
+                Snackbar.make(binding.root, "Network call failed with $it. Swipe down to try again!", Snackbar.LENGTH_SHORT).show()
             }
         }
 
         detectRecyclerViewBottom()
     }
 
+    private fun hideShimmer() {
+        binding.shimmerView.visibility = View.GONE
+    }
+
+    private fun showShimmer() {
+        binding.shimmerView.visibility = View.VISIBLE
+    }
+
     private fun detectRecyclerViewBottom() {
-        binding.listPopularMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (!recyclerView.canScrollVertically(1) && dy > 0) {
-                    model.pageNumber++
+        binding.root.viewTreeObserver.addOnScrollChangedListener {
+            if (binding.shimmerView.visibility == View.GONE) {
+                val view = binding.root.getChildAt(binding.root.childCount - 1) as View
+                val diff: Int = view.bottom - (binding.root.height + binding.root.scrollY)
+                if (diff == 0) {
+                    showShimmer()
                     model.loadMovies()
                 }
             }
-        })
+        }
     }
 }
 
@@ -60,7 +82,11 @@ class MoviesAdapter : ListAdapter<Result, MoviesAdapter.ViewHolder>(MovieDiffCal
     inner class ViewHolder(private val binding: LayoutPopularMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(movie: Result) {
             with (binding) {
-                imageViewMovie.load(movie.imageUrl)
+                imageViewMovie.load(movie.imageUrl) {
+                    crossfade(true)
+                    placeholder(R.drawable.sample)
+                    transformations(RoundedCornersTransformation(10f))
+                }
                 textViewMovieTitle.text = movie.title
                 textViewMovieOverview.text = movie.overview
             }
