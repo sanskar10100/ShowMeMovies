@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        detectRecyclerViewBottom()
+        setupScrollViewBottomListener()
     }
 
     private fun hideLoadingShimmer() {
@@ -64,7 +64,10 @@ class HomeFragment : Fragment() {
         binding.loadingShimmerView.visibility = View.VISIBLE
     }
 
-    private fun detectRecyclerViewBottom() {
+    /**
+     * Listener triggers whenever the NestedScrollView is at the bottom
+     */
+    private fun setupScrollViewBottomListener() {
         binding.root.viewTreeObserver.addOnScrollChangedListener {
             if (binding.loadingShimmerView.visibility == View.GONE) {
                 // Don't make the API call on scrolling to bottom case
