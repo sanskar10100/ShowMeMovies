@@ -17,12 +17,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/shimmerView"
+        app:layout_constraintBottom_toTopOf="@id/loading_shimmer_view"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:nestedScrollingEnabled="false"/>
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmerView"
+        android:id="@+id/loading_shimmer_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

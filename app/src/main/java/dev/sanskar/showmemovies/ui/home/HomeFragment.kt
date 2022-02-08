@@ -41,36 +41,38 @@ class HomeFragment : Fragment() {
 
         model.movies.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
-                hideShimmer()
+                hideLoadingShimmer()
                 adapter.submitList(it)
             }
         }
 
         model.error.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
-                hideShimmer()
-                Snackbar.make(binding.root, "Network call failed with $it. Swipe down to try again!", Snackbar.LENGTH_SHORT).show()
+                hideLoadingShimmer()
+                Snackbar.make(binding.root, "Network call failed with $it. Please try again!", Snackbar.LENGTH_SHORT).show()
             }
         }
 
         detectRecyclerViewBottom()
     }
 
-    private fun hideShimmer() {
-        binding.shimmerView.visibility = View.GONE
+    private fun hideLoadingShimmer() {
+        binding.loadingShimmerView.visibility = View.GONE
     }
 
-    private fun showShimmer() {
-        binding.shimmerView.visibility = View.VISIBLE
+    private fun showLoadingShimmer() {
+        binding.loadingShimmerView.visibility = View.VISIBLE
     }
 
     private fun detectRecyclerViewBottom() {
         binding.root.viewTreeObserver.addOnScrollChangedListener {
-            if (binding.shimmerView.visibility == View.GONE) {
+            if (binding.loadingShimmerView.visibility == View.GONE) {
+                // Don't make the API call on scrolling to bottom case
+                // If the loading view is already visible, indicating call already has been made
                 val view = binding.root.getChildAt(binding.root.childCount - 1) as View
                 val diff: Int = view.bottom - (binding.root.height + binding.root.scrollY)
                 if (diff == 0) {
-                    showShimmer()
+                    showLoadingShimmer()
                     model.loadMovies()
                 }
             }
