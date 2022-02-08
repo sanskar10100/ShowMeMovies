@@ -14,5 +14,10 @@ data class Result(
     val title: String,
     val video: Boolean,
     val vote_average: Double,
-    val vote_count: Int
-)
+    val vote_count: Int,
+) {
+    val imageUrl: String
+    get() {
+        return "https://image.tmdb.org/t/p/w500/$backdrop_path"
+    }
+}

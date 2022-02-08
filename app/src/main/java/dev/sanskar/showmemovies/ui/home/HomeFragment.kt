@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import dev.sanskar.showmemovies.data.Result
 import dev.sanskar.showmemovies.databinding.FragmentHomeBinding
 import dev.sanskar.showmemovies.databinding.LayoutPopularMovieBinding
@@ -46,6 +47,7 @@ class MoviesAdapter : ListAdapter<Result, MoviesAdapter.ViewHolder>(MovieDiffCal
     inner class ViewHolder(private val binding: LayoutPopularMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(movie: Result) {
             with (binding) {
+                imageViewMovie.load(movie.imageUrl)
                 textViewMovieTitle.text = movie.title
                 textViewMovieOverview.text = movie.overview
             }
